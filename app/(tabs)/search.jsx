@@ -8,19 +8,21 @@ import SearchBar from '@/components/SearchBar';
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: movies, loading, error, refetch } = useFetch(() => fetchMovies({ query: searchQuery }), false)
+  const { data: movies, loading, error, refetch, reset } = useFetch(() => fetchMovies({ query: searchQuery }), false)
 
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const timer = setTimeout(async () => {
       if (searchQuery.trim().length > 0) {
-        refetch();
+        await refetch();
+      } else {
+        reset()
       }
     }, 500);
 
     return () => clearTimeout(timer);
-    
-  }, [searchQuery])
+
+  }, [searchQuery]);
 
   // console.log(movies)
 
@@ -58,6 +60,15 @@ const Search = () => {
           paddingHorizontal: 10,
           paddingBottom: 100,
         }}
+        ListEmptyComponent={
+          !loading && !error ? (
+            <View className='mt-10 px-5'>
+              <Text className='text-center text-gray-500'>
+                {searchQuery.trim() ? 'No movies found' : 'Search for a movie'}
+              </Text>
+            </View>
+          ) : null
+        }
       />
     </View>
   )
