@@ -1,9 +1,9 @@
-import { View, Text, FlatList, TextInput, ActivityIndicator } from 'react-native'
+import { View, Text, FlatList } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import MovieCard from '@/components/MovieCard'
-import useFetch from '@/services/useFetch';
 import { fetchMovies } from '@/services/api';
 import SearchBar from '@/components/SearchBar';
+import useFetch from '@/services/useFetch';
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,6 +12,7 @@ const Search = () => {
 
 
   useEffect(() => {
+    
     const timer = setTimeout(async () => {
       if (searchQuery.trim().length > 0) {
         await refetch();
@@ -52,7 +53,7 @@ const Search = () => {
         keyExtractor={(item) => item.id.toString()}
         numColumns={3}
         columnWrapperStyle={{
-          justifyContent: 'space-between', // better spacing
+          justifyContent: 'space-between',
           gap: 16,
           marginVertical: 8,
         }}
