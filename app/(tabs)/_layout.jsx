@@ -1,12 +1,12 @@
 import React from 'react'
-import { Tabs } from 'expo-router'
+import { Redirect, Tabs } from 'expo-router'
 import Entypo from '@expo/vector-icons/Entypo';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Text, View } from 'react-native';
 
 
-const TabIcon = ({ focused, icon: IconComponent, title }: any) => {
+const TabIcon = ({ focused, icon: IconComponent, title }) => {
     return (
         <View className='items-center py-2'>
             <IconComponent name={title} size={24} color={focused ? 'white' : '#A0A0A0'} />
@@ -16,6 +16,13 @@ const TabIcon = ({ focused, icon: IconComponent, title }: any) => {
 }
 
 const _Layout = () => {
+
+    const isAuth = false; // later from Firebase/AuthContext
+
+    if (!isAuth) {
+        return <Redirect href="(auth)" />;
+    }
+
     return (
         <Tabs
             screenOptions={{
