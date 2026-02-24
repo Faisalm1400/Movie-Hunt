@@ -1,11 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from '@expo/vector-icons/Feather';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
+import { useAuth } from '@/context/AuthContext'
 
 const Signup = () => {
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -14,36 +14,64 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
+  const { signUp } = useAuth();
 
-  const handleLogin = () => {
+
+  useEffect(()=>{
+    router.push('/(auth)/onboarding')
+  },[])
+
+  const handleSignUp = async () => {
     setError('');
 
-    if (!email.trim() || !password.trim()) {
-      setError('Please fill in all fields');
+    if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
+      Alert.alert('Please fill in all fields');
       return;
     }
 
+    if (password.length < 6) {
+      Alert.alert("Password must be at least 6 characters.")
+      return
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Password and Confirm Password must be the same.")
+      return
+    }
+
     if (!/^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/.test(email)) {
-      setError('Please enter a valid email');
+      Alert.alert('Please enter a valid email');
       return;
     }
 
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await signUp(email, password)
+    } catch (error) {
+      console.log(error)
+      Alert.alert("Error", "Failed to sign up.");
+    } finally {
+      Alert.alert("Success")
+      setLoading(false)
+    }
 
-      // on success
 
-      router.replace('/(tabs)');
 
-      // On failure:
-      // setError('Invalid credentials');
-    }, 1500)
+    // setTimeout(() => {
+    //   setLoading(false);
+
+    //   // on success
+
+    //   router.replace('/(tabs)');
+
+    //   // On failure:
+    //   // setError('Invalid credentials');
+    // }, 1500)
   }
 
   return (
-    <SafeAreaView className="bg-bg-primary flex-1">
+    <SafeAreaView edges={["top", "bottom"]} className="bg-bg-primary flex-1">
       <View className='px-5 py-12'>
         <View className='items-center px-8 mb-5'>
           <Text className="text-white text-4xl font-bold">Join MovieHunt</Text>
@@ -52,21 +80,6 @@ const Signup = () => {
 
         {/* Form */}
         <View className='gap-6'>
-          {/* Name */}
-          <View>
-            <Text className='text-gray-300 mb-2 font-medium'>Full Name</Text>
-            <View className="flex-row items-center bg-bg-tertiary rounded-xl px-4 py-4 border border-border focus-within:border-accent">
-              <Feather name="user" size={20} color="#9CA3AF" />
-              <TextInput
-                className='flex-1 ml-3 text-white text-base'
-                placeholder='Jhon Doe'
-                placeholderTextColor="#6B7280"
-                value={name}
-                onChangeText={setName}
-                autoCapitalize='words'
-              />
-            </View>
-          </View>
 
           {/* Email */}
           <View>
@@ -112,7 +125,7 @@ const Signup = () => {
 
           {/* Confirm Password */}
           <View>
-            <Text className='text-gray-300 mb-2 font-medium'>Password</Text>
+            <Text className='text-gray-300 mb-2 font-medium'>Confirm Password</Text>
             <View className="flex-row items-center bg-bg-tertiary rounded-xl px-4 py-4 border border-border focus-within:border-accent">
               <Feather name="lock" size={20} color="#9CA3AF" />
               <TextInput
@@ -121,12 +134,12 @@ const Signup = () => {
                 placeholderTextColor="#6B7280"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
-                secureTextEntry={!confirmPassword}
+                secureTextEntry={!showConfirmPassword}
                 autoCapitalize='none'
               />
-              <TouchableOpacity onPress={() => setConfirmPassword(!confirmPassword)}>
+              <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                 <Feather
-                  name={confirmPassword ? 'eye' : 'eye-off'}
+                  name={showConfirmPassword ? 'eye' : 'eye-off'}
                   size={20}
                   color="#9CA3AF"
                 />
@@ -134,20 +147,15 @@ const Signup = () => {
             </View>
           </View>
 
-          {/* Error */}
-          {error ? (
-            <Text className="text-red-500 text-center mt-2">{error}</Text>
-          ) : null}
-
           <TouchableOpacity
-            onPress={handleLogin}
+            onPress={handleSignUp}
             disabled={loading}
             className={`bg-accent rounded-xl py-4 items-center mt-6 ${loading ? 'opacity-70' : ''}`}
           >
             {loading ? (
               <ActivityIndicator color="white" size="small" />
             ) : (
-              <Text className="text-white text-lg font-semibold">Sign In</Text>
+              <Text className="text-white text-lg font-semibold">Sign Up</Text>
             )}
           </TouchableOpacity>
 
