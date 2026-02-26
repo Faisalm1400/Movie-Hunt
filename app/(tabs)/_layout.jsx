@@ -17,12 +17,6 @@ const TabIcon = ({ focused, icon: IconComponent, title }) => {
 
 const _Layout = () => {
 
-    const isAuth = false; // later from Firebase/AuthContext
-
-    if (!isAuth) {
-        return <Redirect href="(auth)" />;
-    }
-
     return (
         <Tabs
             screenOptions={{
