@@ -1,9 +1,10 @@
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
-import useFetch from '@/services/useFetch'
 import { fetchMovieDetails } from '@/services/api'
 import { Entypo, Feather } from '@expo/vector-icons'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import BookmarkButton from '../../components/BookmarkButton'
+import useFetch from '../../services/useFetch'
 
 
 const MovieInfo = ({ label, value }) => (
@@ -20,13 +21,24 @@ const MovieDetails = () => {
 
   const { data: movie, loading } = useFetch(() => fetchMovieDetails(id));
 
+
+
+   if (loading) {
+          return (
+              <View className="flex-1 justify-center items-center">
+                  <ActivityIndicator size="large" />
+              </View>
+          );
+      }
+
   return (
-    <View className='bg-bg-primary flex-1'>
+    <SafeAreaView className='bg-bg-primary flex-1'>
       <ScrollView contentContainerStyle={{
         paddingBottom: 80
       }}>
         <View>
           <Image source={{ uri: `https://image.tmdb.org/t/p/w500${movie?.poster_path}` }} className='w-full h-[550px]' resizeMode='stretch' />
+          {movie && <BookmarkButton movie={movie} />}
         </View>
 
         <View className='flex-col items-start justify-center mt-5 px-5 '>
@@ -59,7 +71,7 @@ const MovieDetails = () => {
         <Feather name="arrow-left" size={24} color="#fff" />
         <Text className='text-text-primary font-semibold text-base'>Go back</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   )
 }
 

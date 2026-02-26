@@ -3,12 +3,13 @@ import React from 'react'
 import { Feather } from '@expo/vector-icons'
 import MovieCard from '@/components/MovieCard';
 import { Link } from 'expo-router';
+import { useApp } from '../../context/AppContext';
 
 const Saved = () => {
 
-  const savedMovies = [];
+  const { bookmarks } = useApp();
 
-  const hasSaved = savedMovies.length > 0;
+  const hasSaved = bookmarks.length > 0;
 
 
   return (
@@ -16,7 +17,7 @@ const Saved = () => {
       <View className="px-6 pt-12 pb-4">
         <Text className='text-white text-3xl font-bold'>Saved Movies</Text>
         <Text className='text-text-secondary mt-2
-        '>{hasSaved ? `${savedMovies.length} saved` : "Your watchlist is empty"}</Text>
+        '>{hasSaved ? `${bookmarks.length} saved` : "Your watchlist is empty"}</Text>
       </View>
 
       {
@@ -37,7 +38,7 @@ const Saved = () => {
           </View>
         ) : (
           <FlatList
-            data={savedMovies}
+            data={bookmarks}
             keyExtractor={item => item.id.toString()}
             numColumns={2}
             columnWrapperStyle={{ paddingHorizontal: 10, gap: 12 }}

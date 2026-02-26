@@ -1,6 +1,6 @@
 const { useState, useEffect } = require("react")
 
-const useFetch =(fetchFunction: () => Promise, autoFetch= true)=>{
+const useFetch =(fetchFunction, autoFetch= true)=>{
     const [data,setData]=useState([]);
     const [loading,setLoading]=useState(false);
     const [error,setError]=useState(null);
